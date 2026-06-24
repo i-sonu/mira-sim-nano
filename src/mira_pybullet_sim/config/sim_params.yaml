@@ -1,0 +1,107 @@
+# mira_pybullet_sim parameters. All values are tunable; defaults are BlueROV2-scale.
+# Loaded by sim.launch.py into the mira_pybullet_sim node.
+#
+# Conventions (see README): world = ENU (+Z up), body = REP-103 (x-fwd, y-left, z-up),
+# water surface at z = water_surface_z. Depth below surface is positive.
+mira_pybullet_sim:
+  ros__parameters:
+    # --- runtime -------------------------------------------------------------
+    gui: false                  # true -> PyBullet GUI (local debug only; needs a display)
+    telemetry_rate: 100.0       # Hz, /master/telemetry
+    odom_rate: 50.0             # Hz, /bluerov2/odometry
+    timestep: 0.0041666667      # s, fixed physics step (1/240)
+
+    # --- body ----------------------------------------------------------------
+    mass: 11.0                  # kg
+    half_extents: [0.30, 0.20, 0.20]   # m, box half-dimensions (x, y, z) = 0.60 x 0.40 x 0.40 m
+    start_x: 0.0               # m, initial spawn x (lateral axis)
+    start_y: -11.8               # m, initial spawn y (forward axis)
+    start_z: -0.5              # m, initial spawn depth (rises to surface when neutral)
+    start_yaw: 1.5707963       # rad, spawn heading about +Z. pi/2 => vehicle faces +Y so
+                               #   forward->+Y, backward->-Y, lateral-right->+X, lateral-left->-X
+
+    # --- environment ---------------------------------------------------------
+    gravity: 9.81               # m/s^2
+    water_density: 1000.0       # kg/m^3 (freshwater; used in pressure + buoyancy)
+    water_surface_z: 0.0        # m, water surface plane in world frame
+
+    # --- buoyancy (tuned slightly positive) ----------------------------------
+    # Weight = mass*g = 107.9 N. Buoyancy at full submersion = rho*g*V.
+    # V = 0.01155 -> 113.3 N (~+5% net up) => slightly positive.
+    displaced_volume: 0.01155   # m^3
+    buoyancy_ramp_height: 0.05  # m, submerged-fraction ramp band at the surface
+    cob_offset_body: [0.0, 0.0, 0.02]   # m, center of buoyancy above CoG -> self-rights
+
+    # --- hydrodynamic drag: F = -c_lin*v - c_quad*|v|*v, per axis -------------
+    drag_linear: [40.0, 60.0, 80.0]          # N/(m/s)        (surge, sway, heave)
+    drag_quadratic: [60.0, 90.0, 120.0]      # N/(m/s)^2
+    angular_drag_linear: [4.0, 4.0, 3.0]     # Nm/(rad/s)     (roll, pitch, yaw)
+    angular_drag_quadratic: [6.0, 6.0, 4.0]  # Nm/(rad/s)^2
+
+    # --- max whole-body wrench (normalized command 1.0 maps to these) --------
+    max_surge_n: 100.0          # N,  +X body
+    max_sway_n: 80.0            # N,  +Y body (left)
+    max_heave_n: 100.0          # N,  +Z body
+    max_roll_nm: 5.0            # Nm, about +X body
+    max_pitch_nm: 5.0           # Nm, about +Y body
+    max_yaw_nm: 8.0             # Nm, about +Z body
+
+    # --- pool (static containing box) ----------------------------------------
+    pool_length: 25.0           # x, m (long)
+    pool_width: 16.0            # y, m (wide)
+    pool_depth: 2.0             # z, m (floor at -pool_depth)
+    pool_wall_thickness: 0.2    # m
+
+    # --- water surface visual plane (ultra-thin flat cuboid at z=0) -----------
+    surface_plane_enabled: true  # set false to hide the water surface plane
+    surface_plane_thickness: 0.0001  # m, 0.1 mm ultra-thin
+
+    # --- square gate / ring (static; AUV swims through) ----------------------
+    ring_enabled: true          # set false to remove the ring entirely
+    ring_size: 1.40             # m, outer side length (1.40 x 1.40)
+    ring_thickness: 0.02        # m, square bar cross-section (0.02 x 0.02)
+    ring_pos: [0.0, -11.8, 0.0]  # m, world center: +y forward, -z deeper
+    ring_rpy: [1.5708, 0.0, 0.0]   # rad, orientation. [1.5708,0,0] => lies flat (opening up)
+
+    # --- orange post (static vertical cuboid marker) -------------------------
+    post_enabled: true          # set false to remove the post entirely
+    post_height: 1.60           # m, height along local Z
+    post_thickness: 0.15        # m, square cross-section (0.15 x 0.15)
+    post_pos: [-0.0, -5.5, -1.2]  # SAUVC Orange Flare (orange-flare zone); z=-pool_depth+height/2
+    post_rpy: [0.0, 0.0, 0.0]   # rad, orientation. [1.5708,0,0] => lies horizontal
+
+    # --- inverted-U gate (static; two legs + top bar; stands on floor) --------
+    gate_enabled: true          # set false to remove the gate entirely
+    gate_width: 1.50            # m, top-bar outer span (leg to leg)
+    gate_height: 1.00           # m, leg height (opening height under the bar)
+    gate_thickness: 0.10        # m, square bar cross-section (0.15 x 0.15)
+    gate_pos: [0.0, 3.5, -2.0]  # SAUVC Gate line (right edge of flare zone); on floor
+    gate_rpy: [0.0, 0.0, 0.0]   # rad, orientation. opening faces +/-Y (AUV swims through +Y)
+
+    # --- drums (static upright cylinders on the floor) -----------------------
+    drums_enabled: true         # set false to remove all drums
+    drum_diameter: 0.60         # m
+    drum_depth: 0.30            # m (cylinder height)
+    # One drum per (x,y,z) triple. z = -pool_depth + drum_depth/2 sits it on the floor.
+    # SAUVC Target Zone: column of 4 drums near the +Y (target) wall, spread across X.
+    drum_positions: [-3.0, 11.0, -1.85,
+                     -1.0, 11.0, -1.85,
+                      1.0, 11.0, -1.85,
+                      3.0, 11.0, -1.85]
+    # Color name per drum, by index (red/blue/green/orange/yellow/white/black).
+    drum_colors: ["blue", "red", "red", "red"]
+
+    # --- flares (static pole + foot; free-moving golf ball balanced on top) ---
+    flares_enabled: true        # set false to remove all flares + balls
+    flare_height: 0.80          # m, pole height
+    flare_pole_diameter: 0.03   # m
+    flare_base_diameter: 0.12   # m, foot disk
+    flare_base_height: 0.03     # m, foot thickness
+    flare_ball_diameter: 0.043  # m, golf ball (dynamic, free to move)
+    flare_ball_mass: 0.046      # kg, golf ball
+    # SAUVC R/B/Y flares, anywhere in the orange-stripe zone. Order = flare_colors.
+    flare_positions: [-3.0,  1.0, -2.0,    # red   (up-right)
+                       2.5, -1.0, -2.0,    # yellow(down-middle)
+                      -2.5, -2.5, -2.0]    # blue  (up-left)
+    # Pole color per flare, by index. Balls are always white (golf ball).
+    flare_colors: ["red", "yellow", "blue"]

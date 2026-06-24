@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mira_pybullet_sim</name>
+  <version>0.1.0</version>
+  <description>
+    Lightweight, CPU-only (headless) PyBullet underwater AUV simulator that speaks
+    the team's real-robot ROS2 /master interface. Phase 1: single rigid cuboid in a
+    pool, 6-DOF whole-body wrench control, buoyant self-righting.
+  </description>
+  <maintainer email="adarshh3000@gmail.com">adarsh</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>custom_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <!-- pybullet is a pip dependency; see README. -->
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
