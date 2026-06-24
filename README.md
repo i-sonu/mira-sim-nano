@@ -2,6 +2,11 @@
 
 A lightweight, headless, CPU-only PyBullet underwater AUV simulator for ROS2. Built for roboticists without a GPU who want to test their ROS nodes against a simulated vehicle. Replicates the real robot's `/master` interface.
 
+<img width="1849" height="1160" alt="Screenshot from 2026-06-25 04-14-29" src="https://github.com/user-attachments/assets/a936ace3-66c6-4893-9bbb-8debf2bba6ab" />
+<img width="1849" height="1160" alt="Screenshot from 2026-06-25 04-15-31" src="https://github.com/user-attachments/assets/58f02f6a-d654-4eb4-acde-df5c18ee0cd9" />
+<img width="1015" height="646" alt="Screenshot from 2026-06-25 04-15-54" src="https://github.com/user-attachments/assets/61a9a316-4e25-4609-ba02-16740b25be3c" />
+
+
 ## Quick Start
 
 ```bash
