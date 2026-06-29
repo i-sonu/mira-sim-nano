@@ -6,13 +6,31 @@ A lightweight, headless, CPU-only PyBullet underwater AUV simulator for ROS2. Bu
 <img width="1849" height="1160" alt="Screenshot from 2026-06-25 04-15-31" src="https://github.com/user-attachments/assets/58f02f6a-d654-4eb4-acde-df5c18ee0cd9" />
 <img width="1015" height="646" alt="Screenshot from 2026-06-25 04-15-54" src="https://github.com/user-attachments/assets/61a9a316-4e25-4609-ba02-16740b25be3c" />
 
+## First-Time Setup (fresh laptop)
+
+Assumes ROS 2 Jazzy is already installed. PyBullet is the only extra dependency.
+
+```bash
+# 1. Install PyBullet (the --break-system-packages --user flags are needed on Ubuntu 24.04)
+pip install --break-system-packages --user pybullet
+
+# 2. Clone the repo
+git clone https://github.com/i-sonu/mira-sim-nano.git ~/DNT/mira_sim_nano
+cd ~/DNT/mira_sim_nano
+
+# 3. Source ROS *before* building (colcon builds the custom_msgs interfaces and needs the rosidl tooling)
+source /opt/ros/jazzy/setup.bash
+colcon build
+source install/setup.bash
+```
+
+> **Every new terminal** needs `source /opt/ros/jazzy/setup.bash` and `source install/setup.bash` before `ros2 run`/`ros2 launch` can find the package. Add them to `~/.bashrc` to avoid retyping. There is no venv/uv—PyBullet is the only pip dependency, and ROS's `rclpy` comes from the system Python.
 
 ## Quick Start
 
 ```bash
 cd ~/DNT/mira_sim_nano
 source /opt/ros/jazzy/setup.bash
-colcon build
 source install/setup.bash
 
 # Run headless (default)
